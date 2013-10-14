@@ -19,19 +19,7 @@ namespace WebApplication1
             
         }
 
-       /// <summary>
-       /// this is a custom validator to check for empty string 
-       /// </summary>
-       /// <param name="source"></param>
-       /// <param name="args"></param>
-        protected void CustomValidator1_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            if (!string.IsNullOrEmpty(SiteId.Text))
-            {
-                args.IsValid = true;
-            }
-
-        }
+      
         /// <summary>
         /// this executes when button is clicked, then goes to load request where it pulls up the page requested
         /// </summary>
@@ -49,9 +37,18 @@ namespace WebApplication1
             }
 
         }
+        //load the document and call the page
+        public void LoadDoc(string siteToCraw)
+        {
+            //this works
+            WebClient theClient = new WebClient();
+            string derhtml = theClient.DownloadString(siteToCraw);
+            HtmlDocument droc = new HtmlDocument();
+            droc.LoadHtml(derhtml);
 
-     
-                    
-                      
+            //to do add code that transfers the document to in memory code scrape links and save to database(save to database needs to be a new thread though)
+        }
+            
+                                            
     }
 }

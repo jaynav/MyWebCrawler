@@ -25,6 +25,10 @@
      Display="Dynamic" ErrorMessage="empty" Text="*" ClientValidationFunction="ValidateForEmpty"
         onservervalidate="CustomValidator1_ServerValidate"></asp:CustomValidator>
         
+        <asp:CustomValidator ID="CustomValidator2" runat="server" 
+        Display ="Dynamic" ErrorMessage="empty" Text="*oh no" 
+        onservervalidate="Validate.DataServerSide"></asp:CustomValidator>
+        
         <p>
             &nbsp;<asp:UpdatePanel ID="up1" runat="server">
        <ContentTemplate>
