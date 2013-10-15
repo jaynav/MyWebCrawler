@@ -15,6 +15,10 @@
             onclick="CrawlSite_Click" />
     
         <br />
+        
+        <h4>links on: <asp:Label ID="LblSiteLinks" runat="server" Text=""></asp:Label></h4>
+            
+        
         <asp:Literal ID="Show_data" runat="server"></asp:Literal>
     
     </div>

@@ -15,6 +15,8 @@ public class Crawls
     private Queue<string> qOfURls = new Queue<string>();
     private Queue<Uri> internalQ = new Queue<Uri>();
     private Queue<Uri> externalQ = new Queue<Uri>();
+    //this is for displaying purposes only
+    private Queue<Uri> DisplayQ = new Queue<Uri>();
 
     public Crawls(string p)
     {
@@ -81,8 +83,22 @@ public class Crawls
         if (inMemory.IsBaseOf(validatr))
         {
             internalQ.Enqueue(validatr);
+            DisplayQ.Enqueue(validatr);
         }
       }
        
+       
+    }
+
+    public string DisplayCurrentCrawl()
+    {
+        string bob ="";
+        foreach (var dat in DisplayQ)
+        {
+           bob += dat.ToString() +"<br />";
+        }
+        return bob;
+        
+        
     }
 }
