@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 class FindsLinksViaRegex
-{
+{     //this is the actual scrapper 
     //this gpl method via scraping example at dotnetperls.com
     public  List<LinkItem> Find(string file)
         {

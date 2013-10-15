@@ -25,6 +25,7 @@ public partial class _Default : System.Web.UI.Page
        
         //uses webclient instead...
         crawl.CrawlNow(PageName.Text);
+        crawl.ProcessLinks();
     }
     
  

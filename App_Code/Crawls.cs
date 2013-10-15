@@ -11,8 +11,10 @@ public class Crawls
     //need to process local links only(some logic needed) and then crawl that page(easy)
     //
 
-    private string p;
+    private string p; string href;
     private Queue<string> qOfURls = new Queue<string>();
+    private Queue<Uri> internalQ = new Queue<Uri>();
+    private Queue<Uri> externalQ = new Queue<Uri>();
 
     public Crawls(string p)
     {
@@ -20,6 +22,8 @@ public class Crawls
         this.p = p;
     }
 
+    //todo need to return value to continue walking internally
+    //todo need to keep track of every page to avoid infinite loop
     public void CrawlNow(string p)
     {
         try
@@ -42,13 +46,43 @@ public class Crawls
         linkitm.AddRange(linkfinder.Find(theHtml));
 
             foreach (LinkItem info in linkitm)
-            { 
-            qOfURls.Enqueue(info.Href);
+            {
+                if (info.Href != null) 
+                { 
+                   qOfURls.Enqueue(info.Href);
+                }
             }
         }
         catch (Exception)
         {
             //ignore the scripts
         }
+    }
+
+    public void ProcessLinks()
+    {
+        Uri inMemory = new Uri(p, UriKind.RelativeOrAbsolute);
+        
+        //int count = 0;
+        while(qOfURls.Count > 0)
+        {
+            href = qOfURls.Dequeue().ToString();
+          //  count++;
+        
+        Uri validatr = new Uri(href, UriKind.RelativeOrAbsolute);
+
+
+        // make relative urls absolute 
+        if (!validatr.IsAbsoluteUri)
+        {
+            validatr = new Uri(inMemory, validatr);
+        }
+
+        if (inMemory.IsBaseOf(validatr))
+        {
+            internalQ.Enqueue(validatr);
+        }
+      }
+       
     }
 }
