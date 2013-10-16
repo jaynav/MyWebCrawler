@@ -40,13 +40,12 @@ public partial class _Default : System.Web.UI.Page
     private void RunCrawl(string siteUrl)
     {
         Crawls crawl = new Crawls(siteUrl);
-        //using http web request......not finished.
-       
+        //using http web request......not finished.----xpath should take less junk, implement iterator instead, less crap.
         // XCrawl loadViaXpath = new XCrawl(PageName.Text);
         // var demo =crawl.LoadDoc(PageName.Text);
 
         //uses webclient instead...
-        crawl.CrawlNow(siteUrl);
+        crawl.RunBot(siteUrl);
         //crawl.ProcessLinks();
          Show_data.Text = crawl.DisplayCurrentCrawl(); 
     }

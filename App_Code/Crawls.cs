@@ -7,14 +7,8 @@ using System.Threading;
 using HtmlAgilityPack;
 
 public class Crawls
-{  //todo need to display links qOfURLs.Dequeue
-    //need to process local links only(some logic needed) and then crawl that page(easy)
-    //
-
-    private string p; //original url 
-    string g;
-    private string rs;// needed for looping 
-    string href;
+{  
+    private string p, rs, href; //original url, // needed for looping, 
     private Queue<string> qOfURls = new Queue<string>();
     private Queue<Uri> internalQ = new Queue<Uri>();
     //this is for displaying purposes only
@@ -25,9 +19,7 @@ public class Crawls
 
     public Crawls(string p)
     {
-        // TODO: Complete member initialization
         this.p = p;
-        g = p;
     }
 
     public void CrawlNow(string p)
@@ -58,12 +50,15 @@ public class Crawls
                 }
             }
         }
+        catch( System.Net.WebException)
+            {
+            // do something
+            }
         catch (Exception)
         {
-            
-            //record 404 errors
+             //catch other errors
         }
-        ProcessLinks();
+        
     }
     /// <summary>
     /// after it gets the hyperlinks, it needs to process them, put them in a absolute uri format for the purpose
@@ -76,7 +71,7 @@ public class Crawls
     public void ProcessLinks()
     {
         Uri inMemory = new Uri(p, UriKind.RelativeOrAbsolute);
-        Uri derLoop = new Uri(g);
+        
         //int count = 0;
         while(qOfURls.Count > 0)
         {
@@ -100,24 +95,33 @@ public class Crawls
                 loopingQ.Enqueue(validatr);
             }
         }
-      }//end while
-        //make to its own method
-        if(!alreadyprocessed.Contains(inMemory))
+      }    
+    }
+
+    public void RunBot(string p) 
+    {
+        Uri inMemory = new Uri(p);
+        CrawlNow(p);
+        ProcessLinks();
+       
+        if (!alreadyprocessed.Contains(inMemory))
         {
             alreadyprocessed.Add(inMemory);
         }
+        
         while (loopingQ.Count > 0)
         {
-             rs = loopingQ.Dequeue().ToString();
-            derLoop = new Uri(rs);
-            if(!alreadyprocessed.Contains(derLoop))
+            rs = loopingQ.Dequeue().ToString();
+            inMemory = new Uri(rs);
+           
+            if (!alreadyprocessed.Contains(inMemory))
             {
-                alreadyprocessed.Add(derLoop);
+                alreadyprocessed.Add(inMemory);
                 Thread.Sleep(1000);
                 CrawlNow(rs);
+                ProcessLinks();
             }
         }
-       
     }
 
     public string DisplayCurrentCrawl()
@@ -127,8 +131,6 @@ public class Crawls
         {
            bob += dat.ToString() +"<br />";
         }
-        return bob;
-        
-        
+        return bob;    
     }
 }
