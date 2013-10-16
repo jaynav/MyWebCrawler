@@ -19,7 +19,7 @@ public class IsUrlCorrect
     public string FixUrl()
     {
         
-            //(?:http://)|(?:https://)
+           
             if (Regex.IsMatch(p, @"\b(?:http://)|\b(?:https://)|\b(?:ftp://)"))
             {
                 return p;

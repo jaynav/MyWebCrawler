@@ -40,14 +40,14 @@ public partial class _Default : System.Web.UI.Page
     private void RunCrawl(string siteUrl)
     {
         Crawls crawl = new Crawls(siteUrl);
-        //using http web request
-
+        //using http web request......not finished.
+       
         // XCrawl loadViaXpath = new XCrawl(PageName.Text);
         // var demo =crawl.LoadDoc(PageName.Text);
 
         //uses webclient instead...
         crawl.CrawlNow(siteUrl);
-        crawl.ProcessLinks();
+        //crawl.ProcessLinks();
          Show_data.Text = crawl.DisplayCurrentCrawl(); 
     }
 

@@ -5,42 +5,42 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 class FindsLinksViaRegex
-{     //this is the actual scrapper 
-    //this gpl method via scraping example at dotnetperls.com
+{     //this is the actual web scrapper 
+
     public  List<LinkItem> Find(string file)
         {
-            List<LinkItem> list = new List<LinkItem>();
+            List<LinkItem> linklist = new List<LinkItem>();
 
-            // 1.
+           
             // Find all matches in file.
-            MatchCollection m1 = Regex.Matches(file, @"(<a.*?>.*?</a>)",
+            MatchCollection anchorFind = Regex.Matches(file, @"(<a.*?>.*?</a>)",
                 RegexOptions.Singleline);
 
-            // 2.
+           
             // Loop over each match.
-            foreach (Match m in m1)
+            foreach (Match theAnchr in anchorFind)
             {
                 
-                string value = m.Groups[1].Value;
-                LinkItem i = new LinkItem();
+                string urivalue = theAnchr.Groups[1].Value;
+                LinkItem webitem = new LinkItem();
 
-                // 3.
+                
                 // Get href attribute.
-                Match m2 = Regex.Match(value, @"href=\""(.*?)\""",
+                Match hyperRef = Regex.Match(urivalue, @"href=\""(.*?)\""",
                 RegexOptions.Singleline);
-                if (m2.Success)
+                if (hyperRef.Success)
                 {
-                    i.Href = m2.Groups[1].Value;
+                    webitem.Href = hyperRef.Groups[1].Value;
                 }
 
-                // 4.
+                
                 // Remove inner tags from text.
-                string t = Regex.Replace(value, @"\s*<.*?>\s*", "",
+                string tag = Regex.Replace(urivalue, @"\s*<.*?>\s*", "",
                 RegexOptions.Singleline);
-                i.Text = t;
+                webitem.Text = tag;
 
-                list.Add(i);
+                linklist.Add(webitem);
             }
-            return list;
+            return linklist;
         }
 }
