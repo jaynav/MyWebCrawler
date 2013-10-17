@@ -1,25 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
-public class IsUrlCorrect
+public struct IsUrlCorrect
 {
     private string p;
 
     public  IsUrlCorrect(string p)
     {
         // TODO: Complete member initialization
-        this.p = p;
-
-        
+        this.p = p;  
     }
 
     public string FixUrl()
     {
-        
-           
             if (Regex.IsMatch(p, @"\b(?:http://)|\b(?:https://)|\b(?:ftp://)"))
             {
                 return p;
@@ -29,8 +22,6 @@ public class IsUrlCorrect
                 return p = "http://" + p;
             }
         }
-
-
 
     public bool CheckValue()
     {

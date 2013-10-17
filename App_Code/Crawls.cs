@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
 using System.Threading;
-using HtmlAgilityPack;
 
 public class Crawls
 {  
@@ -28,12 +25,9 @@ public class Crawls
         {
 
         WebClient easyclient = new WebClient();
+        easyclient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36");
         string theHtml = easyclient.DownloadString(p);
 
-        // load and holds html
-
-        HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-        doc.LoadHtml(theHtml);
 ///creates an instance of the scraper;creates a generic list  class; 
 ///then adds to the list the links it finds on the url requested
 /// then it adds url to queue
@@ -117,7 +111,7 @@ public class Crawls
             if (!alreadyprocessed.Contains(inMemory))
             {
                 alreadyprocessed.Add(inMemory);
-                Thread.Sleep(1000);
+                Thread.Sleep(800);
                 CrawlNow(rs);
                 ProcessLinks();
             }
