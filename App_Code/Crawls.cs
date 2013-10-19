@@ -5,17 +5,19 @@ using System.Threading;
 using System.IO;
 using System.Web;
 using System.Xml.Linq;
+using System.Linq;
 
 public class Crawls
 {  
-    private string p, rs, href; //original url, // needed for looping, 
-    private Queue<string> qOfURls = new Queue<string>();
-    //this is for displaying purposes only
-    private Queue<Uri> DisplayQ = new Queue<Uri>();
+    private string p, rs, href; //original url, // needed for looping, //need for internal/external validation
+    private Queue<string> qOfURls = new Queue<string>(); //need for links found on every page
+    private Queue<Uri> DisplayQ = new Queue<Uri>(); //this is for displaying purposes only ...may be deleted and only may use internalDict for display
     //for processing only
-    private HashSet<Uri> alreadyprocessed = new HashSet<Uri>();
-    private Queue<Uri> loopingQ = new Queue<Uri>();
-
+    private HashSet<Uri> alreadyprocessed = new HashSet<Uri>(); // to avoid loopingq from asking for pages already scrapped
+    private Queue<Uri> loopingQ = new Queue<Uri>(); //need for bot looping of other pages
+    private Queue<Uri> StopLoopQ = new Queue<Uri>();//solve logical error
+    private Dictionary<string, string> internalDict = new Dictionary<string, string>(); //for xml document generation
+    
     public Crawls(string p)
     {
         this.p = p;
@@ -31,15 +33,16 @@ public class Crawls
         easyclient.Headers.Add("accept-Encoding", "deflate");
         string theHtml = easyclient.DownloadString(p);
        
-       /* WebHeaderCollection GetHeaders = easyclient.ResponseHeaders;
+        WebHeaderCollection GetHeaders = easyclient.ResponseHeaders;
         for (int i = 0; i < GetHeaders.Count; i++)
         {
             if (GetHeaders.GetKey(i).Contains("Last-Modified"))
             {
-                (GetHeaders.Get(i), p);
+                internalDict.Add(p, GetHeaders.Get(i));
             }
 
-        }*/
+        }
+            
 
 ///creates an instance of the scraper;creates a generic list  class; 
 ///then adds to the list the links it finds on the url requested
@@ -92,12 +95,13 @@ public class Crawls
                 validatr = new Uri(inMemory, validatr);
                 
             }
-        if(!loopingQ.Contains(validatr))
+        if(!StopLoopQ.Contains(validatr))
         {
             if (inMemory.IsBaseOf(validatr))
             {
                 DisplayQ.Enqueue(validatr);
                 loopingQ.Enqueue(validatr);
+                StopLoopQ.Enqueue(validatr);
             }
         }
       }    
@@ -136,9 +140,13 @@ public class Crawls
         {
            bob += dat.ToString() +"<br />";
         }
+        
         return bob;    
     }
-
+    /// <summary>
+    /// gets the known web pages in the dictionary and creates a new sitemap regardless of if it exists or not
+    /// on the server, then it creates sitemap.org compliant file
+    /// </summary>
     public void SaveXmlSiteMap()
     {
         
@@ -157,10 +165,11 @@ public class Crawls
                   new XElement(xns + "urlset",
                       new XAttribute(XNamespace.Xmlns + "xsi", "http://wwww.w3.org/2001/XMLSchema-instance"),
                       new XAttribute(w3nsp + "schemaLocation", "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
-                      new XElement(xns +"url",
-                          new XElement(xns + "loc"),
-                          new XElement(xns + "lastmod"))));
-             //xdoc.Save(xwriter);
+                        internalDict.Select(data => new XElement(xns + "url",
+                          new XElement(xns + "loc", data.Key),
+                          new XElement(xns + "lastmod", data.Value)))
+                      ));
+
               xwriter.Write(xdoc);
           }
       }

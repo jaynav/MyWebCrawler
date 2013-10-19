@@ -39,8 +39,8 @@ public partial class _Default : System.Web.UI.Page
     {
         Crawls crawl = new Crawls(siteUrl);
        
-       // crawl.RunBot(siteUrl);
-       // Show_data.Text = crawl.DisplayCurrentCrawl();
+        crawl.RunBot(siteUrl);
+        Show_data.Text = crawl.DisplayCurrentCrawl();
         crawl.SaveXmlSiteMap();
     }
 }
