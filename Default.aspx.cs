@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading;
 using System.Text;
 
+
 public partial class _Default : System.Web.UI.Page
 {
     
@@ -38,7 +39,8 @@ public partial class _Default : System.Web.UI.Page
     {
         Crawls crawl = new Crawls(siteUrl);
        
-        crawl.RunBot(siteUrl);
-         Show_data.Text = crawl.DisplayCurrentCrawl(); 
+       // crawl.RunBot(siteUrl);
+       // Show_data.Text = crawl.DisplayCurrentCrawl();
+        crawl.SaveXmlSiteMap();
     }
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using System.IO;
+using System.Web;
+using System.Xml.Linq;
 
 public class Crawls
 {  
     private string p, rs, href; //original url, // needed for looping, 
     private Queue<string> qOfURls = new Queue<string>();
-    private Queue<Uri> internalQ = new Queue<Uri>();
     //this is for displaying purposes only
     private Queue<Uri> DisplayQ = new Queue<Uri>();
     //for processing only
@@ -26,7 +28,18 @@ public class Crawls
 
         WebClient easyclient = new WebClient();
         easyclient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36");
+        easyclient.Headers.Add("accept-Encoding", "deflate");
         string theHtml = easyclient.DownloadString(p);
+       
+       /* WebHeaderCollection GetHeaders = easyclient.ResponseHeaders;
+        for (int i = 0; i < GetHeaders.Count; i++)
+        {
+            if (GetHeaders.GetKey(i).Contains("Last-Modified"))
+            {
+                (GetHeaders.Get(i), p);
+            }
+
+        }*/
 
 ///creates an instance of the scraper;creates a generic list  class; 
 ///then adds to the list the links it finds on the url requested
@@ -66,11 +79,10 @@ public class Crawls
     {
         Uri inMemory = new Uri(p, UriKind.RelativeOrAbsolute);
         
-        //int count = 0;
         while(qOfURls.Count > 0)
         {
             href = qOfURls.Dequeue().ToString();
-          //  count++;
+     
         // this only excepts strings not uri objects and for the purpose of checking if internal i did it this way
         Uri validatr = new Uri(href, UriKind.RelativeOrAbsolute);
         
@@ -80,11 +92,10 @@ public class Crawls
                 validatr = new Uri(inMemory, validatr);
                 
             }
-        if(!internalQ.Contains(validatr))
+        if(!loopingQ.Contains(validatr))
         {
             if (inMemory.IsBaseOf(validatr))
             {
-                internalQ.Enqueue(validatr);
                 DisplayQ.Enqueue(validatr);
                 loopingQ.Enqueue(validatr);
             }
@@ -126,5 +137,33 @@ public class Crawls
            bob += dat.ToString() +"<br />";
         }
         return bob;    
+    }
+
+    public void SaveXmlSiteMap()
+    {
+        
+       var pathFile = HttpContext.Current.Server.MapPath("~/sitemap.xml");
+       //using (FileStream der = new FileStream(pathFile, FileMode.CreateNew)) 
+      using (FileStream der = new FileStream(pathFile, FileMode.Create))
+      {
+          using (StreamWriter xwriter = new StreamWriter(der))
+          {
+              
+              XNamespace xns = "http://www.sitemaps.org/schemas/sitemap/0.9";
+              XNamespace w3nsp = "http://wwww.w3.org/2001/XMLSchema-instance";
+
+              var xdoc = new XDocument(
+                  new XDeclaration("1.0","UTF-8", null),
+                  new XElement(xns + "urlset",
+                      new XAttribute(XNamespace.Xmlns + "xsi", "http://wwww.w3.org/2001/XMLSchema-instance"),
+                      new XAttribute(w3nsp + "schemaLocation", "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
+                      new XElement(xns +"url",
+                          new XElement(xns + "loc"),
+                          new XElement(xns + "lastmod"))));
+             //xdoc.Save(xwriter);
+              xwriter.Write(xdoc);
+          }
+      }
+       
     }
 }
